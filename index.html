@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>星轨 ORBIT · mpsxx.top 子域名星系</title>
+  <meta name="description" content="一个域名的私人星系 —— mpsxx.top 全部子域名的三维导航。" />
+  <meta name="theme-color" content="#05060A" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='4' fill='%23E4C88E'/%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%23E4C88E' stroke-opacity='.5'/%3E%3Ccircle cx='26' cy='11' r='1.6' fill='%23F2F0EA'/%3E%3C/svg%3E" />
+
+  <!-- 字体：Google Fonts（国内可整行替换为 fonts.loli.net 镜像；失败自动回退系统字体） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500&family=Noto+Serif+SC:wght@700;900&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- CDN 看门狗：依赖加载失败时给出提示而非黑屏 -->
+  <script>
+    window.__orbitReady = false;
+    window.addEventListener('error', function (e) {
+      if (window.__orbitReady) return;
+      var n = document.getElementById('loader-note');
+      if (n) n.textContent = '脚本错误: ' + (e.message || 'unknown') + (e.filename ? ' @' + e.filename.split('/').pop() + ':' + e.lineno : '');
+    });
+    window.addEventListener('unhandledrejection', function (e) {
+      if (window.__orbitReady) return;
+      var n = document.getElementById('loader-note');
+      var r = e.reason;
+      if (n) n.textContent = 'Promise错误: ' + ((r && r.message) || r);
+    });
+    setTimeout(function () {
+      if (!window.__orbitReady) {
+        var note = document.getElementById('loader-note');
+        if (note) note.textContent = 'CDN 资源加载较慢或被拦截 —— 请检查网络后刷新（需可访问 cdn.jsdelivr.net）';
+      }
+    }, 9000);
+  </script>
+</head>
+<body>
+
+  <!-- 加载层 -->
+  <div id="loader" aria-hidden="true">
+    <div class="loader-inner">
+      <p class="loader-pct" id="loader-pct">00%</p>
+      <div class="loader-bar"><i id="loader-bar-fill"></i></div>
+      <p class="loader-log" id="loader-note">正在点燃恒星 ······</p>
+    </div>
+    <noscript><p class="loader-log">需要启用 JavaScript 才能进入星系。</p></noscript>
+  </div>
+
+  <!-- 三维舞台 -->
+  <div id="stage" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- 覆盖层 UI -->
+  <div class="frame" id="ui">
+
+    <!-- 四角十字装饰 -->
+    <i class="corner c-tl"></i><i class="corner c-tr"></i>
+    <i class="corner c-bl"></i><i class="corner c-br"></i>
+
+    <header class="topbar">
+      <a class="wordmark" href="https://mpsxx.top" target="_blank" rel="noopener">
+        <i class="wm-dot"></i>MPSXX.TOP<span class="wm-sub">星系图 · GALAXY INDEX</span>
+      </a>
+      <div class="statusblock">
+        <p class="status-line"><i class="status-pulse" id="status-dot"></i><span id="status-text">— / — 节点在线</span></p>
+        <p class="clock mono" id="clock">----.--.-- · --:--:--</p>
+      </div>
+    </header>
+
+    <div class="titleblock">
+      <p class="kicker">ORBIT — A PRIVATE GALAXY OF SUBDOMAINS</p>
+      <h1 class="title">星轨</h1>
+      <p class="lede">一个域名的私人星系 · 七颗行星绕行不息</p>
+    </div>
+
+    <!-- 右缘索引列 -->
+    <nav class="index" id="index" aria-label="子域名索引"></nav>
+
+    <!-- 底部提示与退役档案 -->
+    <div class="hints mono" id="hints">
+      <p>点击行星或索引聚焦 · <b>←/→</b> 切换 · <b>ENTER</b> 访问 · <b>ESC</b> 返回全景 · 拖动旋转星系</p>
+      <p class="retired">RETIRED · 已退役 —— <span id="retired-list"></span></p>
+    </div>
+
+    <!-- 行星悬停 tooltip -->
+    <div class="tooltip mono" id="tooltip" aria-hidden="true"><span class="tt-view">[ VIEW ]</span><span id="tt-text"></span></div>
+
+    <!-- 档案卡 -->
+    <aside class="dossier" id="dossier" aria-hidden="true" aria-live="polite">
+      <span class="d-ghost" id="d-ghost">01</span>
+      <button class="d-close" id="d-close" aria-label="关闭档案">×</button>
+      <p class="d-status" id="d-status"><i></i><span id="d-status-text">在线 · ONLINE</span></p>
+      <h2 class="d-name" id="d-name">—</h2>
+      <p class="d-en" id="d-en">—</p>
+      <p class="d-domain mono" id="d-domain">—</p>
+      <p class="d-desc" id="d-desc">—</p>
+      <ul class="d-tags" id="d-tags"></ul>
+      <div class="d-actions">
+        <a class="btn-primary" id="d-visit" href="#" target="_blank" rel="noopener">访问站点 ↗</a>
+        <button class="btn-ghost" id="d-back">返回星图</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- GSAP（全局，供场景与 UI 补间） -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="js/ui.js"></script>
+</body>
+</html>
