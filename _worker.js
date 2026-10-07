@@ -590,6 +590,19 @@ async function handlePublicContent(request, env, ctx) {
   return json(content);
 }
 
+/* 静态资源：强制浏览器与 Cloudflare 边缘每次重新校验。
+   否则 CF Pages 会给静态文件加较长的 max-age（实测约 4 小时），
+   导致部署更新后不刷新缓存仍能看到旧样式。 */
+async function serveStatic(request, env) {
+  const res = await env.ASSETS.fetch(request);
+  if (res.status === 200) {
+    const headers = new Headers(res.headers);
+    headers.set('Cache-Control', 'public, max-age=0, must-revalidate, no-cache');
+    return new Response(res.body, { status: 200, statusText: res.statusText, headers });
+  }
+  return res;
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -612,7 +625,7 @@ export default {
       if (pathname === '/api/content') return await handlePublicContent(request, env, ctx);
       if (pathname === '/api/admin' || pathname.startsWith('/api/admin/')) return await handleAdmin(request, env, ctx, pathname);
       if (pathname.startsWith('/api/')) return fail('接口不存在', 404);
-      return env.ASSETS.fetch(request);
+      return serveStatic(request, env);
     } catch (err) {
       const status = err && err.status ? err.status : 500;
       const prefix = status === 500 ? '服务异常：' : '';
