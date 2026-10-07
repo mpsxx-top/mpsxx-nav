@@ -1,0 +1,197 @@
+/* ============================================================
+ * ORBIT 控制台样式（深色 / 与主站同一套色系）
+ * ============================================================ */
+
+:root {
+  --bg: #0a0c12;
+  --panel: #12151f;
+  --panel-2: #171b28;
+  --line: #242938;
+  --text: #e8e6e1;
+  --muted: #8b90a2;
+  --gold: #e4c88e;
+  --ok: #7ed8b8;
+  --warn: #e8c87e;
+  --err: #e0708a;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.6 "Noto Sans SC", "Microsoft YaHei", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body { display: flex; flex-direction: column; }
+a { color: inherit; text-decoration: none; }
+code { background: #1c2130; padding: 1px 5px; border-radius: 4px; font-family: "JetBrains Mono", Consolas, monospace; }
+.muted { color: var(--muted); font-size: 12px; }
+.mono { font-family: "JetBrains Mono", Consolas, monospace; }
+
+/* ---------- 顶栏 ---------- */
+
+.topbar {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 10px 16px;
+  background: linear-gradient(180deg, #141826, #0e1119);
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 600; letter-spacing: .06em; }
+.brand em { color: var(--gold); font-style: normal; font-weight: 400; opacity: .8; }
+.brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+.state { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.bar-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.note {
+  width: 230px; padding: 7px 10px; border-radius: 8px;
+  background: #0e1119; border: 1px solid var(--line); color: var(--text);
+}
+.switch { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; cursor: pointer; }
+
+.pill {
+  padding: 4px 10px; border-radius: 999px; font-size: 12px;
+  background: #1b2030; border: 1px solid var(--line); color: var(--muted);
+}
+.pill.dirty { color: var(--warn); border-color: #4a3f22; background: #241f14; }
+.pill.saving { color: var(--gold); border-color: #4a4227; }
+.pill.saved { color: var(--ok); border-color: #24483c; background: #10241e; }
+
+/* ---------- 按钮 / 表单 ---------- */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 7px 12px; border-radius: 8px; cursor: pointer;
+  background: #1b2030; border: 1px solid var(--line); color: var(--text);
+  font-size: 12px; transition: .15s;
+}
+.btn:hover { border-color: #3a4257; background: #202638; }
+.btn.primary { background: #2a2416; border-color: #57492a; color: var(--gold); }
+.btn.primary:hover { background: #362d1b; }
+.btn.ghost { background: transparent; }
+.btn.small { padding: 4px 9px; font-size: 12px; }
+.btn.danger { color: var(--err); border-color: #4a2a33; background: #241418; }
+
+.input, textarea.input, select.input {
+  width: 100%; padding: 7px 9px; border-radius: 8px;
+  background: #0e1119; border: 1px solid var(--line); color: var(--text);
+  font-size: 13px; font-family: inherit;
+}
+.input:focus { outline: none; border-color: #4a5a7a; }
+textarea.input { resize: vertical; line-height: 1.7; }
+
+/* ---------- 提示条 ---------- */
+
+.banner {
+  padding: 10px 16px; font-size: 13px;
+  background: #2a1a1f; border-bottom: 1px solid #4a2a33; color: #f0b8c4;
+}
+
+/* ---------- 标签页 ---------- */
+
+.tabs { display: flex; gap: 4px; padding: 8px 16px 0; border-bottom: 1px solid var(--line); background: #0d1017; }
+.tab {
+  padding: 8px 14px; background: transparent; border: none; border-bottom: 2px solid transparent;
+  color: var(--muted); cursor: pointer; font-size: 13px;
+}
+.tab:hover { color: var(--text); }
+.tab.is-on { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ---------- 工作区 ---------- */
+
+.workspace {
+  flex: 1; min-height: 0;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 34vw);
+}
+.pane { min-width: 0; overflow: auto; padding: 14px 16px; }
+.tabpanel { display: none; }
+.tabpanel.is-on { display: grid; grid-template-columns: minmax(220px, 280px) minmax(0, 1fr); gap: 14px; }
+.tabpanel.is-on .col.wide { grid-column: 1 / -1; }
+
+.col {
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 12px; min-width: 0;
+}
+.col-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-bottom: 10px; font-size: 12px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase;
+}
+.hint { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+/* ---------- 行星列表 ---------- */
+
+.planet-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.planet-list li {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: 8px; cursor: grab;
+  background: var(--panel-2); border: 1px solid transparent;
+}
+.planet-list li:hover { border-color: var(--line); }
+.planet-list li.is-on { border-color: #4a4227; background: #1d1a12; }
+.planet-list li.dragging { opacity: .45; }
+.planet-list .swatch { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; box-shadow: 0 0 8px currentColor; }
+.planet-list .no { color: var(--muted); font-size: 11px; font-family: "JetBrains Mono", monospace; }
+.planet-list .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.planet-list .dot-off { width: 6px; height: 6px; border-radius: 50%; background: var(--err); flex: 0 0 auto; }
+
+/* ---------- 表单 ---------- */
+
+.field { margin-bottom: 11px; }
+.field > label { display: block; margin-bottom: 4px; font-size: 12px; color: var(--muted); }
+.field .sub { color: #646b80; font-size: 11px; margin-left: 6px; }
+.field .range-row { display: flex; align-items: center; gap: 10px; }
+.field input[type="range"] { flex: 1; accent-color: var(--gold); }
+.field .num { width: 78px; flex: 0 0 auto; }
+.field input[type="color"] { width: 46px; height: 32px; padding: 2px; background: #0e1119; border: 1px solid var(--line); border-radius: 8px; }
+.field .color-row { display: flex; align-items: center; gap: 10px; }
+.form-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.form-head h2 { margin: 0; font-size: 15px; font-weight: 600; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 14px; }
+.field.full { grid-column: 1 / -1; }
+.empty { color: var(--muted); padding: 24px; text-align: center; }
+
+/* ---------- 表格 ---------- */
+
+table.grid { width: 100%; border-collapse: collapse; font-size: 12px; }
+table.grid th, table.grid td { padding: 7px 9px; border-bottom: 1px solid var(--line); text-align: left; }
+table.grid th { color: var(--muted); font-weight: 500; }
+table.grid td.mono { font-family: "JetBrains Mono", monospace; }
+.ok-text { color: var(--ok); }
+.off-text { color: var(--err); }
+.snapshot {
+  margin-top: 12px; max-height: 380px; overflow: auto; padding: 12px;
+  background: #0e1119; border: 1px solid var(--line); border-radius: 8px;
+  font-family: "JetBrains Mono", monospace; font-size: 11px; line-height: 1.6; color: #b9c0d4;
+}
+
+/* ---------- 预览 ---------- */
+
+.preview {
+  border-left: 1px solid var(--line); background: #0d1017;
+  display: flex; flex-direction: column; min-width: 0;
+}
+.preview .col-head { padding: 12px 12px 0; margin-bottom: 8px; }
+.preview iframe {
+  flex: 1; min-height: 0; width: 100%; border: none; background: #05060a;
+}
+.preview .hint { padding: 0 12px 12px; }
+
+/* ---------- toast ---------- */
+
+.toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+  padding: 10px 16px; border-radius: 10px; font-size: 13px; z-index: 50;
+  background: #1d2434; border: 1px solid var(--line); box-shadow: 0 10px 30px #0008;
+}
+.toast[data-kind="ok"] { border-color: #24483c; color: var(--ok); }
+.toast[data-kind="warn"] { border-color: #4a4227; color: var(--warn); }
+.toast[data-kind="error"] { border-color: #4a2a33; color: var(--err); }
+
+@media (max-width: 1080px) {
+  .workspace { grid-template-columns: minmax(0, 1fr); }
+  .preview { display: none; }
+  .tabpanel.is-on { grid-template-columns: minmax(0, 1fr); }
+}

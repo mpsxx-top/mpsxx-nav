@@ -1,3 +1,7 @@
 .DS_Store
 Thumbs.db
 *.log
+
+# wrangler 本地状态（D1 本地 sqlite / 构建缓存）
+.wrangler/
+.dev.vars

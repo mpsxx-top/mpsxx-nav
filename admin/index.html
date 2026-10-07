@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ORBIT 控制台 · mpsxx.top</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='4' fill='%23E4C88E'/%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%23E4C88E' stroke-opacity='.5'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand"><span class="dot"></span>ORBIT 控制台<em>mpsxx.top</em></div>
+    <div class="state">
+      <span id="sync-state" class="pill">加载中…</span>
+      <span id="published-at" class="muted"></span>
+    </div>
+    <div class="bar-actions">
+      <input id="publish-note" class="note" type="text" placeholder="发布说明（可选，会记进历史版本）" />
+      <button id="btn-publish" class="btn primary" type="button">发布到公网</button>
+      <label class="switch" title="编辑后自动刷新右侧预览">
+        <input id="auto-preview" type="checkbox" checked /> 自动预览
+      </label>
+      <span id="who" class="muted"></span>
+      <a class="btn ghost" href="/" target="_blank" rel="noopener">看公网 ↗</a>
+    </div>
+  </header>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab is-on" data-tab="planets" type="button">行星</button>
+    <button class="tab" data-tab="meta" type="button">主星与页面</button>
+    <button class="tab" data-tab="retired" type="button">退役子域</button>
+    <button class="tab" data-tab="history" type="button">历史版本</button>
+    <button class="tab" data-tab="data" type="button">数据与探测</button>
+  </nav>
+
+  <div class="workspace">
+    <div class="pane">
+
+      <section class="tabpanel is-on" data-panel="planets">
+        <div class="col list">
+          <div class="col-head">
+            <span>行星 · 拖拽排序</span>
+            <button id="btn-add" class="btn small" type="button">+ 新增</button>
+          </div>
+          <ul id="planet-list" class="planet-list"></ul>
+          <p class="hint">拖拽改变公转顺序；编号 01/02/03… 保存时自动重排。</p>
+        </div>
+        <div class="col form" id="form"></div>
+      </section>
+
+      <section class="tabpanel" data-panel="meta">
+        <div class="col form wide" id="meta-form"></div>
+      </section>
+
+      <section class="tabpanel" data-panel="retired">
+        <div class="col form wide">
+          <div class="col-head"><span>已退役子域名</span></div>
+          <p class="hint">每行一个（写 <code>tool</code> 或 <code>tool.mpsxx.top</code> 都行）。这些只出现在页脚的"退役"文案里。</p>
+          <textarea id="retired-input" class="input mono" rows="14" spellcheck="false"></textarea>
+        </div>
+      </section>
+
+      <section class="tabpanel" data-panel="history">
+        <div class="col form wide">
+          <div class="col-head">
+            <span>历史版本</span>
+            <button id="btn-reload-revisions" class="btn small ghost" type="button">刷新</button>
+          </div>
+          <p class="hint">每次「发布」都会留一个版本快照；回滚只是把该版本写回草稿，仍需点发布才对外生效。</p>
+          <div id="revisions"></div>
+          <pre id="revision-preview" class="snapshot" hidden></pre>
+        </div>
+      </section>
+
+      <section class="tabpanel" data-panel="data">
+        <div class="col form wide">
+          <div class="col-head"><span>导入 / 导出 / 探测</span></div>
+          <div class="row">
+            <a class="btn" href="/api/admin/export">导出 JSON</a>
+            <label class="btn" for="import-file">导入 JSON</label>
+            <input id="import-file" type="file" accept="application/json,.json" hidden />
+            <button id="btn-probe" class="btn" type="button">立即探测在线状态</button>
+          </div>
+          <p class="hint">导入只写入草稿，不会直接改动公网内容。</p>
+          <div class="col-head"><span>最近一次探测结果</span></div>
+          <div id="probe-table"></div>
+        </div>
+      </section>
+
+    </div>
+
+    <aside class="preview">
+      <div class="col-head">
+        <span>实时预览 · 草稿态</span>
+        <button id="btn-reload-preview" class="btn small ghost" type="button">刷新</button>
+      </div>
+      <iframe id="preview" src="/?preview=1" title="草稿预览"></iframe>
+      <p class="hint">预览加载的是真实站点，数据来自未发布的草稿。</p>
+    </aside>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script type="module" src="./admin.js"></script>
+</body>
+</html>

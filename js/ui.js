@@ -3,8 +3,20 @@
  * 加载序列 / 索引 / 档案卡 / 键盘导航 / 时钟 / tooltip
  * ============================================================ */
 
-import { SITES, STAR, RETIRED, onlineCount } from './data.js';
+import { loadContent } from './content.js';
 import { createScene } from './scene.js';
+
+/* 运行时取内容：优先 /api/content（后台面板发布的结果），失败回退内置 js/data.js。
+   必须在这里 await —— 下面的三维场景要按 SITES 逐颗建立行星与轨道。 */
+const content = (await loadContent().catch((err) => {
+  console.warn('[orbit] 内容加载异常：', err);
+  return null;
+})) || { sites: [], star: {}, retired: [], onlineCount: 0 };
+
+const SITES = content.sites;
+const STAR = content.star;
+const RETIRED = content.retired;
+const onlineCount = content.onlineCount;
 
 const $ = (id) => document.getElementById(id);
 const els = {

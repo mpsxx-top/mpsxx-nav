@@ -1,0 +1,14 @@
+# Cloudflare Pages 项目配置（本地开发用；生产变量请在 Pages 项目的
+# Settings → Variables and Secrets 里配置 ACCESS_TEAM_DOMAIN / ACCESS_AUD / ADMIN_EMAILS）
+#
+# 注意：不要在这里写 DEV_BYPASS 或任何密钥 —— 本地测试请用命令行传参：
+#   npx wrangler pages dev . --binding DEV_BYPASS=true
+
+name = "mpsxx-nav"
+pages_build_output_dir = "."
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "orbit-content"
+database_id = "00000000-0000-0000-0000-000000000000"   # 建库后替换为真实 ID
