@@ -75,9 +75,9 @@ code { background: #1c2130; padding: 1px 5px; border-radius: 4px; font-family: "
 .btn.danger { color: var(--err); border-color: #4a2a33; background: #241418; }
 
 .input, textarea.input, select.input {
-  width: 100%; padding: 7px 9px; border-radius: 8px;
+  width: 100%; padding: 5px 8px; border-radius: 8px;
   background: #0e1119; border: 1px solid var(--line); color: var(--text);
-  font-size: 13px; font-family: inherit;
+  font-size: 12px; font-family: inherit;
 }
 .input:focus { outline: none; border-color: #4a5a7a; }
 textarea.input { resize: vertical; line-height: 1.7; }
@@ -113,23 +113,23 @@ textarea.input { resize: vertical; line-height: 1.7; }
   min-height: 0;
   overflow: auto;
   scrollbar-width: none;
-  padding: 14px 16px;
+  padding: 6px 16px;
 }
 .pane::-webkit-scrollbar { display: none; }
 .tabpanel { display: none; }
-.tabpanel.is-on { display: flex; flex-direction: column; gap: 14px; }
+.tabpanel.is-on { display: flex; flex-direction: column; gap: 8px; }
 .tabpanel.is-on .col.wide { width: 100%; }
 
 .col {
   background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 12px; min-width: 0;
+  padding: 10px 12px; min-width: 0;
 }
-.col.list.strip { padding: 8px 10px; }
+.col.list.strip { padding: 4px 10px; }
 .col-head {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  margin-bottom: 10px; font-size: 12px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase;
+  margin-bottom: 6px; font-size: 11px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase;
 }
-.hint { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
+.hint { color: var(--muted); font-size: 11px; margin: 4px 0 0; }
 .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
 /* ---------- 行星条（横向） ---------- */
@@ -160,19 +160,19 @@ textarea.input { resize: vertical; line-height: 1.7; }
 
 /* ---------- 表单 ---------- */
 
-.field { margin-bottom: 11px; }
-.field > label { display: block; margin-bottom: 4px; font-size: 12px; color: var(--muted); }
+.field { margin-bottom: 4px; }
+.field > label { display: block; margin-bottom: 1px; font-size: 11px; color: var(--muted); }
 .field .sub { color: #646b80; font-size: 11px; margin-left: 6px; }
 .field .range-row { display: flex; align-items: center; gap: 10px; }
 .field input[type="range"] { flex: 1; accent-color: var(--gold); }
 .field .num { width: 78px; flex: 0 0 auto; }
 .field input[type="color"] { width: 46px; height: 32px; padding: 2px; background: #0e1119; border: 1px solid var(--line); border-radius: 8px; }
 .field .color-row { display: flex; align-items: center; gap: 10px; }
-.form-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
-.form-head h2 { margin: 0; font-size: 15px; font-weight: 600; }
-.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0 14px; }
+.form-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.form-head h2 { margin: 0; font-size: 14px; font-weight: 600; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0 10px; }
 .field.full { grid-column: 1 / -1; }
-.empty { color: var(--muted); padding: 24px; text-align: center; }
+.empty { color: var(--muted); padding: 18px; text-align: center; }
 
 /* ---------- 表格 ---------- */
 
