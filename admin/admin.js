@@ -162,25 +162,61 @@ function reloadPreview() {
   catch { frame.src = '/?preview=1'; }
 }
 
-/* 横屏站点预览：默认 16:9，并提供常见视口比例检查 */
-const PREVIEW_MODES = {
-  desktop: { label: '1440 × 810 · 16:9' },
-  laptop: { label: '1280 × 800 · 16:10' },
-  tablet: { label: '1024 × 768 · 4:3' },
-  phone: { label: '390 × 844 · 9:19.5' },
+/* 横屏站点预览：内层按真实视口尺寸渲染，再整体缩放塞进右侧栏，
+   这样既能看真实的桌面断点效果，又不会把编辑区挤出屏幕。 */
+const PREVIEW_VIEWPORTS = {
+  desktop: { w: 1440, h: 810 },
+  laptop: { w: 1280, h: 800 },
+  tablet: { w: 1024, h: 768 },
+  phone: { w: 390, h: 844 },
 };
+const previewState = { mode: 'desktop', zoom: 'fit' };
+
+function applyPreview() {
+  const view = PREVIEW_VIEWPORTS[previewState.mode] || PREVIEW_VIEWPORTS.desktop;
+  const stage = $('#preview-stage');
+  const fit = $('#preview-fit');
+  const viewport = $('#preview-viewport');
+  if (!stage || !fit || !viewport) return;
+
+  stage.dataset.mode = previewState.mode;
+  stage.dataset.zoom = previewState.zoom;
+
+  let scale = 1;
+  if (previewState.zoom === 'fit') {
+    const availW = Math.max(240, stage.clientWidth - 22);
+    const availH = Math.max(160, stage.clientHeight - 22);
+    scale = Math.min(availW / view.w, availH / view.h, 1);
+  }
+  scale = Math.round(scale * 1000) / 1000;
+
+  viewport.style.setProperty('--vw', `${view.w}px`);
+  viewport.style.setProperty('--vh', `${view.h}px`);
+  viewport.style.setProperty('--scale', String(scale));
+  fit.style.width = `${Math.round(view.w * scale)}px`;
+  fit.style.height = `${Math.round(view.h * scale)}px`;
+
+  const meta = $('#preview-meta');
+  if (meta) meta.textContent = `${view.w} × ${view.h} · 缩放 ${Math.round(scale * 100)}%`;
+
+  $$('.preview-mode[data-preview-mode]').forEach((button) => {
+    button.classList.toggle('is-on', button.dataset.previewMode === previewState.mode);
+  });
+  $$('.preview-mode[data-preview-zoom]').forEach((button) => {
+    button.classList.toggle('is-on', button.dataset.previewZoom === previewState.zoom);
+  });
+}
 
 function setPreviewMode(mode) {
-  if (!PREVIEW_MODES[mode]) mode = 'desktop';
-  const stage = $('.preview-stage');
-  stage.dataset.mode = mode;
-  $('#preview-size-label').textContent = PREVIEW_MODES[mode].label;
-  $$('.preview-mode').forEach((button) => {
-    const active = button.dataset.previewMode === mode;
-    button.classList.toggle('is-on', active);
-    button.setAttribute('aria-pressed', String(active));
-  });
-  try { localStorage.setItem('orbit-preview-mode', mode); } catch { /* 隐私模式可能禁用 */ }
+  previewState.mode = PREVIEW_VIEWPORTS[mode] ? mode : 'desktop';
+  try { localStorage.setItem('orbit-preview-mode', previewState.mode); } catch { /* 隐私模式可能禁用 */ }
+  applyPreview();
+}
+
+function setPreviewZoom(zoom) {
+  previewState.zoom = zoom === 'full' ? 'full' : 'fit';
+  try { localStorage.setItem('orbit-preview-zoom', previewState.zoom); } catch { /* 隐私模式可能禁用 */ }
+  applyPreview();
 }
 
 async function togglePreviewFullscreen() {
@@ -196,7 +232,7 @@ async function togglePreviewFullscreen() {
 function syncFullscreenButton() {
   $('#btn-fullscreen-preview').textContent = document.fullscreenElement === $('#preview-panel')
     ? '退出全屏'
-    : '全屏预览';
+    : '全屏';
 }
 
 /* ------------------------------------------------------------------ *
@@ -718,13 +754,21 @@ function bindStatic() {
   $('#btn-reload-revisions').addEventListener('click', loadRevisions);
   $('#btn-reload-preview').addEventListener('click', reloadPreview);
   $('#btn-fullscreen-preview').addEventListener('click', togglePreviewFullscreen);
-  $$('.preview-mode').forEach((button) => {
+  $$('.preview-mode[data-preview-mode]').forEach((button) => {
     button.addEventListener('click', () => setPreviewMode(button.dataset.previewMode));
   });
-  document.addEventListener('fullscreenchange', syncFullscreenButton);
-  let initialPreviewMode = 'desktop';
-  try { initialPreviewMode = localStorage.getItem('orbit-preview-mode') || 'desktop'; } catch { /* 忽略 */ }
-  setPreviewMode(initialPreviewMode);
+  $$('.preview-mode[data-preview-zoom]').forEach((button) => {
+    button.addEventListener('click', () => setPreviewZoom(button.dataset.previewZoom));
+  });
+  document.addEventListener('fullscreenchange', () => { syncFullscreenButton(); applyPreview(); });
+  window.addEventListener('resize', applyPreview);
+  try {
+    previewState.mode = localStorage.getItem('orbit-preview-mode') || 'desktop';
+    previewState.zoom = localStorage.getItem('orbit-preview-zoom') || 'fit';
+  } catch { /* 隐私模式可能禁用 */ }
+  if (!PREVIEW_VIEWPORTS[previewState.mode]) previewState.mode = 'desktop';
+  applyPreview();
+  if (window.ResizeObserver) new ResizeObserver(() => applyPreview()).observe($('#preview-stage'));
 
   $('#retired-input').addEventListener('input', (e) => {
     state.draft.retired = e.target.value.split('\n').map((x) => x.trim()).filter(Boolean);

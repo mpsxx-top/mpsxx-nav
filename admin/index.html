@@ -97,33 +97,37 @@
       <div class="preview-toolbar">
         <div class="preview-heading">
           <span class="preview-kicker">LIVE VIEW</span>
-          <strong>实时预览 · 草稿态</strong>
-          <span id="preview-size-label" class="preview-size-label">1440 × 810 · 16:9</span>
+          <strong>草稿实时预览</strong>
         </div>
-        <div class="preview-actions" role="group" aria-label="预览设备尺寸">
-          <button class="preview-mode is-on" data-preview-mode="desktop" type="button" aria-pressed="true">桌面 16:9</button>
-          <button class="preview-mode" data-preview-mode="laptop" type="button" aria-pressed="false">笔记本 16:10</button>
-          <button class="preview-mode" data-preview-mode="tablet" type="button" aria-pressed="false">平板</button>
-          <button class="preview-mode" data-preview-mode="phone" type="button" aria-pressed="false">手机</button>
+        <div class="preview-actions" role="group" aria-label="预览视口与缩放">
+          <button class="preview-mode is-on" data-preview-mode="desktop" type="button">1440×810</button>
+          <button class="preview-mode" data-preview-mode="laptop" type="button">1280×800</button>
+          <button class="preview-mode" data-preview-mode="tablet" type="button">1024×768</button>
+          <button class="preview-mode" data-preview-mode="phone" type="button">390×844</button>
+          <span class="preview-divider" aria-hidden="true"></span>
+          <button class="preview-mode is-on" data-preview-zoom="fit" type="button">适应</button>
+          <button class="preview-mode" data-preview-zoom="full" type="button">1:1</button>
           <span class="preview-divider" aria-hidden="true"></span>
           <button id="btn-reload-preview" class="btn small ghost" type="button">刷新</button>
-          <button id="btn-fullscreen-preview" class="btn small ghost" type="button">全屏预览</button>
+          <button id="btn-fullscreen-preview" class="btn small ghost" type="button">全屏</button>
         </div>
       </div>
-      <div class="preview-stage" data-mode="desktop">
-        <div class="preview-viewport">
-          <div class="preview-chrome" aria-hidden="true">
-            <i></i><i></i><i></i>
-            <span>mpsxx.top/?preview=1</span>
-          </div>
-          <div class="preview-screen">
-            <iframe id="preview" src="/?preview=1" title="草稿实时预览"></iframe>
+      <div class="preview-stage" id="preview-stage" data-mode="desktop" data-zoom="fit">
+        <div class="preview-fit" id="preview-fit">
+          <div class="preview-viewport" id="preview-viewport">
+            <div class="preview-chrome" aria-hidden="true">
+              <i></i><i></i><i></i>
+              <span id="preview-url">mpsxx.top/?preview=1</span>
+            </div>
+            <div class="preview-screen">
+              <iframe id="preview" src="/?preview=1" title="草稿实时预览"></iframe>
+            </div>
           </div>
         </div>
       </div>
       <div class="preview-foot">
-        <p class="hint">按真实视口比例渲染横屏导航页；编辑草稿后自动刷新，不影响公网版本。</p>
-        <span>ESC 退出全屏</span>
+        <span id="preview-meta">1440 × 810 · 缩放 100%</span>
+        <span class="preview-note">按真实桌面视口渲染，编辑时无需滚动即可对照</span>
       </div>
     </aside>
   </div>
