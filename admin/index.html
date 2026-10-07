@@ -93,13 +93,38 @@
 
     </div>
 
-    <aside class="preview">
-      <div class="col-head">
-        <span>实时预览 · 草稿态</span>
-        <button id="btn-reload-preview" class="btn small ghost" type="button">刷新</button>
+    <aside class="preview" id="preview-panel">
+      <div class="preview-toolbar">
+        <div class="preview-heading">
+          <span class="preview-kicker">LIVE VIEW</span>
+          <strong>实时预览 · 草稿态</strong>
+          <span id="preview-size-label" class="preview-size-label">1440 × 810 · 16:9</span>
+        </div>
+        <div class="preview-actions" role="group" aria-label="预览设备尺寸">
+          <button class="preview-mode is-on" data-preview-mode="desktop" type="button" aria-pressed="true">桌面 16:9</button>
+          <button class="preview-mode" data-preview-mode="laptop" type="button" aria-pressed="false">笔记本 16:10</button>
+          <button class="preview-mode" data-preview-mode="tablet" type="button" aria-pressed="false">平板</button>
+          <button class="preview-mode" data-preview-mode="phone" type="button" aria-pressed="false">手机</button>
+          <span class="preview-divider" aria-hidden="true"></span>
+          <button id="btn-reload-preview" class="btn small ghost" type="button">刷新</button>
+          <button id="btn-fullscreen-preview" class="btn small ghost" type="button">全屏预览</button>
+        </div>
       </div>
-      <iframe id="preview" src="/?preview=1" title="草稿预览"></iframe>
-      <p class="hint">预览加载的是真实站点，数据来自未发布的草稿。</p>
+      <div class="preview-stage" data-mode="desktop">
+        <div class="preview-viewport">
+          <div class="preview-chrome" aria-hidden="true">
+            <i></i><i></i><i></i>
+            <span>mpsxx.top/?preview=1</span>
+          </div>
+          <div class="preview-screen">
+            <iframe id="preview" src="/?preview=1" title="草稿实时预览"></iframe>
+          </div>
+        </div>
+      </div>
+      <div class="preview-foot">
+        <p class="hint">按真实视口比例渲染横屏导航页；编辑草稿后自动刷新，不影响公网版本。</p>
+        <span>ESC 退出全屏</span>
+      </div>
     </aside>
   </div>
 

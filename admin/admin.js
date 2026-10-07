@@ -162,6 +162,43 @@ function reloadPreview() {
   catch { frame.src = '/?preview=1'; }
 }
 
+/* 横屏站点预览：默认 16:9，并提供常见视口比例检查 */
+const PREVIEW_MODES = {
+  desktop: { label: '1440 × 810 · 16:9' },
+  laptop: { label: '1280 × 800 · 16:10' },
+  tablet: { label: '1024 × 768 · 4:3' },
+  phone: { label: '390 × 844 · 9:19.5' },
+};
+
+function setPreviewMode(mode) {
+  if (!PREVIEW_MODES[mode]) mode = 'desktop';
+  const stage = $('.preview-stage');
+  stage.dataset.mode = mode;
+  $('#preview-size-label').textContent = PREVIEW_MODES[mode].label;
+  $$('.preview-mode').forEach((button) => {
+    const active = button.dataset.previewMode === mode;
+    button.classList.toggle('is-on', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  try { localStorage.setItem('orbit-preview-mode', mode); } catch { /* 隐私模式可能禁用 */ }
+}
+
+async function togglePreviewFullscreen() {
+  const panel = $('#preview-panel');
+  try {
+    if (document.fullscreenElement === panel) await document.exitFullscreen();
+    else await panel.requestFullscreen();
+  } catch (err) {
+    toast(`浏览器不支持全屏预览：${err.message}`, 'warn');
+  }
+}
+
+function syncFullscreenButton() {
+  $('#btn-fullscreen-preview').textContent = document.fullscreenElement === $('#preview-panel')
+    ? '退出全屏'
+    : '全屏预览';
+}
+
 /* ------------------------------------------------------------------ *
  * 字段构造（行星与页面文案共用一套）
  * ------------------------------------------------------------------ */
@@ -680,6 +717,14 @@ function bindStatic() {
   $('#btn-probe').addEventListener('click', probeNow);
   $('#btn-reload-revisions').addEventListener('click', loadRevisions);
   $('#btn-reload-preview').addEventListener('click', reloadPreview);
+  $('#btn-fullscreen-preview').addEventListener('click', togglePreviewFullscreen);
+  $$('.preview-mode').forEach((button) => {
+    button.addEventListener('click', () => setPreviewMode(button.dataset.previewMode));
+  });
+  document.addEventListener('fullscreenchange', syncFullscreenButton);
+  let initialPreviewMode = 'desktop';
+  try { initialPreviewMode = localStorage.getItem('orbit-preview-mode') || 'desktop'; } catch { /* 忽略 */ }
+  setPreviewMode(initialPreviewMode);
 
   $('#retired-input').addEventListener('input', (e) => {
     state.draft.retired = e.target.value.split('\n').map((x) => x.trim()).filter(Boolean);
