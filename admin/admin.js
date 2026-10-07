@@ -219,6 +219,10 @@ const SITE_FIELDS = [
     key: 'status', label: '在线状态', type: 'select',
     options: [['auto', '自动探测'], ['online', '强制在线'], ['offline', '强制离线']],
   },
+  {
+    key: 'probe', label: '在线探测', type: 'checkbox',
+    onText: '探测访问地址（关闭后不再探测，状态取手动值）',
+  },
   { key: 'hue', label: '主色', type: 'color' },
   { key: 'size', label: '体积', type: 'range', min: 0.1, max: 1.2, step: 0.01 },
   { key: 'orbit', label: '轨道半径', type: 'range', min: 1, max: 40, step: 0.1 },
@@ -285,6 +289,22 @@ function buildField(obj, cfg) {
     }
     el.addEventListener('change', () => commit(el.value));
     wrap.appendChild(el);
+    return wrap;
+  }
+
+  if (type === 'checkbox') {
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.id = id;
+    input.checked = obj[cfg.key] !== false;
+    input.addEventListener('change', () => commit(input.checked));
+    const row = document.createElement('div');
+    row.className = 'check';
+    const inline = document.createElement('label');
+    inline.htmlFor = id;
+    inline.textContent = cfg.onText || '在线探测';
+    row.append(input, inline);
+    wrap.appendChild(row);
     return wrap;
   }
 

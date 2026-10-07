@@ -168,6 +168,8 @@ textarea.input { resize: vertical; line-height: 1.7; }
 .field .num { width: 78px; flex: 0 0 auto; }
 .field input[type="color"] { width: 46px; height: 32px; padding: 2px; background: #0e1119; border: 1px solid var(--line); border-radius: 8px; }
 .field .color-row { display: flex; align-items: center; gap: 10px; }
+.check { display: flex; align-items: center; gap: 7px; margin-top: 7px; color: var(--muted); font-size: 12px; }
+.check input { width: 15px; height: 15px; accent-color: var(--gold); cursor: pointer; margin: 0; }
 .form-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
 .form-head h2 { margin: 0; font-size: 14px; font-weight: 600; }
 .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0 10px; }

@@ -173,6 +173,7 @@ function normalizeDocInner(input) {
       desc: cleanText(raw.desc, LIMITS.descLen, { field: `${id} 的描述` }),
       tags,
       status,
+      probe: (raw.probe === false || raw.probe === 0 || raw.probe === 'false') ? false : true,
       hue: hueRaw || null,
       size: cleanNumber(raw.size, { min: 0.1, max: 2, def: 0.42, field: `${id} 的体积` }),
       orbit,
@@ -229,6 +230,7 @@ async function readDraft(env) {
     speed: row.speed,
     incl: row.incl,
     phase: row.phase,
+    probe: row.probe !== 0,   // 探测开关（D1 存 0/1；旧列不存在时视为开启）
   }));
 
   return {
@@ -263,14 +265,15 @@ async function writeDraft(env, doc, nowMs) {
   }
 
   const insertSite = env.DB.prepare(
-    `INSERT INTO sites (id, sort_index, no, zh, en, kind, domain, alt, url, desc, tags, status, hue, size, orbit, speed, incl, phase)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO sites (id, sort_index, no, zh, en, kind, domain, alt, url, desc, tags, status, hue, size, orbit, speed, incl, phase, probe)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   );
   for (const s of doc.sites) {
     stmts.push(
       insertSite.bind(
         s.id, s.sortIndex, s.no, s.zh, s.en, s.kind, s.domain, s.alt, s.url, s.desc,
-        JSON.stringify(s.tags), s.status, s.hue, s.size, s.orbit, s.speed, s.incl, s.phase
+        JSON.stringify(s.tags), s.status, s.hue, s.size, s.orbit, s.speed, s.incl, s.phase,
+        s.probe === false ? 0 : 1
       )
     );
   }
@@ -290,19 +293,20 @@ async function writeDraft(env, doc, nowMs) {
  * ------------------------------------------------------------------ */
 
 async function probeAll(env) {
-  const { results } = await env.DB.prepare('SELECT domain FROM sites ORDER BY sort_index ASC').all();
+  const { results } = await env.DB.prepare('SELECT id, domain, url, probe FROM sites ORDER BY sort_index ASC').all();
   const checkedAt = new Date().toISOString();
   const rows = [];
 
   await Promise.all(
-    (results || []).map(async ({ domain }) => {
+    (results || []).map(async ({ id, domain, url, probe }) => {
+      if (probe === 0 || probe === false) return;   // 该行星探测已关闭（如已卸载的子域名），跳过
       const started = Date.now();
       let alive = 0;
       let httpStatus = null;
       try {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS);
-        const res = await fetch(`https://${domain}/`, {
+        const res = await fetch(url, {   // 只探测行星的访问地址 url
           redirect: 'follow',
           signal: controller.signal,
           headers: { 'user-agent': 'orbit-probe/1.0 (+https://mpsxx.top)' },
@@ -338,13 +342,20 @@ async function probeMap(env) {
 /** 把探测结果合并进内容：status=auto 的行星跟随探测，手动值则覆盖探测 */
 function mergeStatuses(sites, probes) {
   const merged = sites.map((s) => {
-    const probe = probes.get(s.domain) || null;
+    const enabled = s.probe !== false;             // 探测开关（旧快照无该字段则视为开启）
+    const probe = enabled ? probes.get(s.domain) || null : null;
     let status = s.status;
-    if (s.status === 'auto') status = probe ? (probe.ok ? 'online' : 'offline') : 'online';
+    if (!enabled) {
+      // 探测关闭：不再自动判定，取手动状态；仍是 auto 时按离线处理，避免误标在线
+      status = s.status === 'auto' ? 'offline' : s.status;
+    } else if (s.status === 'auto') {
+      status = probe ? (probe.ok ? 'online' : 'offline') : 'online';
+    }
     return {
       ...s,
       status,
       statusMode: s.status,
+      probeEnabled: enabled,
       probe: probe ? { ok: !!probe.ok, httpStatus: probe.http_status, ms: probe.ms, checkedAt: probe.checked_at } : null,
     };
   });
