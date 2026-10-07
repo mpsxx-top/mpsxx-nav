@@ -479,7 +479,7 @@ function bindDragAndDrop() {
     const over = e.target.closest('li[data-id]');
     if (!over || over === dragging) return;
     const rect = over.getBoundingClientRect();
-    const after = e.clientY - rect.top > rect.height / 2;
+    const after = e.clientX - rect.left > rect.width / 2;   // 横向条：按 X 判断插入点
     list.insertBefore(dragging, after ? over.nextSibling : over);
   });
 

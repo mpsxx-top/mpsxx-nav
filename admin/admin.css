@@ -106,17 +106,25 @@ textarea.input { resize: vertical; line-height: 1.7; }
   min-height: 0;
   overflow: hidden;
   display: grid;
-  grid-template-columns: minmax(0, 680px) minmax(0, 1fr);
+  grid-template-columns: minmax(560px, 40%) minmax(0, 1fr);
 }
-.pane { min-width: 0; min-height: 0; overflow: auto; padding: 14px 16px; }
+.pane {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: none;
+  padding: 14px 16px;
+}
+.pane::-webkit-scrollbar { display: none; }
 .tabpanel { display: none; }
-.tabpanel.is-on { display: grid; grid-template-columns: minmax(150px, 200px) minmax(0, 1fr); gap: 14px; }
-.tabpanel.is-on .col.wide { grid-column: 1 / -1; }
+.tabpanel.is-on { display: flex; flex-direction: column; gap: 14px; }
+.tabpanel.is-on .col.wide { width: 100%; }
 
 .col {
   background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
   padding: 12px; min-width: 0;
 }
+.col.list.strip { padding: 8px 10px; }
 .col-head {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
   margin-bottom: 10px; font-size: 12px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase;
@@ -124,14 +132,24 @@ textarea.input { resize: vertical; line-height: 1.7; }
 .hint { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
 .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
-/* ---------- 行星列表 ---------- */
+/* ---------- 行星条（横向） ---------- */
 
-.planet-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.planet-list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: row; gap: 6px;
+}
+.planet-list.strip-list {
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.planet-list.strip-list::-webkit-scrollbar { display: none; }
 .planet-list li {
   display: flex; align-items: center; gap: 9px;
   padding: 8px 10px; border-radius: 8px; cursor: grab;
   background: var(--panel-2); border: 1px solid transparent;
 }
+.planet-list.strip-list li { flex: 0 0 auto; min-width: 176px; }
 .planet-list li:hover { border-color: var(--line); }
 .planet-list li.is-on { border-color: #4a4227; background: #1d1a12; }
 .planet-list li.dragging { opacity: .45; }
@@ -178,7 +196,7 @@ table.grid td.mono { font-family: "JetBrains Mono", monospace; }
   height: 100%;
   min-width: 0;
   min-height: 0;
-  padding: 12px;
+  padding: 8px 10px;
   border-left: 1px solid var(--line);
   background:
     radial-gradient(circle at 88% -12%, rgba(228, 200, 142, .07), transparent 36%),
@@ -191,7 +209,7 @@ table.grid td.mono { font-family: "JetBrains Mono", monospace; }
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  padding: 0 2px 10px;
+  padding: 0 2px 8px;
 }
 
 .preview-heading { display: flex; align-items: baseline; gap: 8px; }
@@ -212,7 +230,7 @@ table.grid td.mono { font-family: "JetBrains Mono", monospace; }
 .preview-stage {
   flex: 1;
   min-height: 0;
-  padding: 10px;
+  padding: 8px;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -245,8 +263,8 @@ table.grid td.mono { font-family: "JetBrains Mono", monospace; }
 }
 
 .preview-chrome {
-  height: 28px;
-  flex: 0 0 28px;
+  height: 24px;
+  flex: 0 0 24px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -273,7 +291,7 @@ table.grid td.mono { font-family: "JetBrains Mono", monospace; }
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 8px 2px 0;
+  padding: 6px 2px 0;
   color: var(--muted);
   font: 10px/1.4 "JetBrains Mono", Consolas, monospace;
 }
@@ -305,7 +323,6 @@ table.grid td.mono { font-family: "JetBrains Mono", monospace; }
   .pane { overflow: visible; }
   .preview { height: auto; min-height: 460px; border-left: 0; border-top: 1px solid var(--line); }
   .preview-stage { min-height: 340px; }
-  .tabpanel.is-on { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 700px) {
