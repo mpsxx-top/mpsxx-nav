@@ -162,61 +162,28 @@ function reloadPreview() {
   catch { frame.src = '/?preview=1'; }
 }
 
-/* 横屏站点预览：内层按真实视口尺寸渲染，再整体缩放塞进右侧栏，
-   这样既能看真实的桌面断点效果，又不会把编辑区挤出屏幕。 */
-const PREVIEW_VIEWPORTS = {
-  desktop: { w: 1440, h: 810 },
-  laptop: { w: 1280, h: 800 },
-  tablet: { w: 1024, h: 768 },
-  phone: { w: 390, h: 844 },
-};
-const previewState = { mode: 'desktop', zoom: 'fit' };
+/* 草稿预览：固定按 1024×768 真实视口渲染，再等比缩放到右侧可用空间。
+   单一视口 + 适应缩放，不再提供多档视口与 1:1 切换。 */
+const PREVIEW_VIEWPORT = { w: 1024, h: 768 };
 
 function applyPreview() {
-  const view = PREVIEW_VIEWPORTS[previewState.mode] || PREVIEW_VIEWPORTS.desktop;
   const stage = $('#preview-stage');
   const fit = $('#preview-fit');
   const viewport = $('#preview-viewport');
   if (!stage || !fit || !viewport) return;
 
-  stage.dataset.mode = previewState.mode;
-  stage.dataset.zoom = previewState.zoom;
+  const availW = Math.max(240, stage.clientWidth - 22);
+  const availH = Math.max(160, stage.clientHeight - 22);
+  const scale = Math.round(Math.min(availW / PREVIEW_VIEWPORT.w, availH / PREVIEW_VIEWPORT.h, 1) * 1000) / 1000;
 
-  let scale = 1;
-  if (previewState.zoom === 'fit') {
-    const availW = Math.max(240, stage.clientWidth - 22);
-    const availH = Math.max(160, stage.clientHeight - 22);
-    scale = Math.min(availW / view.w, availH / view.h, 1);
-  }
-  scale = Math.round(scale * 1000) / 1000;
-
-  viewport.style.setProperty('--vw', `${view.w}px`);
-  viewport.style.setProperty('--vh', `${view.h}px`);
+  viewport.style.setProperty('--vw', `${PREVIEW_VIEWPORT.w}px`);
+  viewport.style.setProperty('--vh', `${PREVIEW_VIEWPORT.h}px`);
   viewport.style.setProperty('--scale', String(scale));
-  fit.style.width = `${Math.round(view.w * scale)}px`;
-  fit.style.height = `${Math.round(view.h * scale)}px`;
+  fit.style.width = `${Math.round(PREVIEW_VIEWPORT.w * scale)}px`;
+  fit.style.height = `${Math.round(PREVIEW_VIEWPORT.h * scale)}px`;
 
   const meta = $('#preview-meta');
-  if (meta) meta.textContent = `${view.w} × ${view.h} · 缩放 ${Math.round(scale * 100)}%`;
-
-  $$('.preview-mode[data-preview-mode]').forEach((button) => {
-    button.classList.toggle('is-on', button.dataset.previewMode === previewState.mode);
-  });
-  $$('.preview-mode[data-preview-zoom]').forEach((button) => {
-    button.classList.toggle('is-on', button.dataset.previewZoom === previewState.zoom);
-  });
-}
-
-function setPreviewMode(mode) {
-  previewState.mode = PREVIEW_VIEWPORTS[mode] ? mode : 'desktop';
-  try { localStorage.setItem('orbit-preview-mode', previewState.mode); } catch { /* 隐私模式可能禁用 */ }
-  applyPreview();
-}
-
-function setPreviewZoom(zoom) {
-  previewState.zoom = zoom === 'full' ? 'full' : 'fit';
-  try { localStorage.setItem('orbit-preview-zoom', previewState.zoom); } catch { /* 隐私模式可能禁用 */ }
-  applyPreview();
+  if (meta) meta.textContent = `${PREVIEW_VIEWPORT.w} × ${PREVIEW_VIEWPORT.h} · 缩放 ${Math.round(scale * 100)}%`;
 }
 
 async function togglePreviewFullscreen() {
@@ -754,19 +721,8 @@ function bindStatic() {
   $('#btn-reload-revisions').addEventListener('click', loadRevisions);
   $('#btn-reload-preview').addEventListener('click', reloadPreview);
   $('#btn-fullscreen-preview').addEventListener('click', togglePreviewFullscreen);
-  $$('.preview-mode[data-preview-mode]').forEach((button) => {
-    button.addEventListener('click', () => setPreviewMode(button.dataset.previewMode));
-  });
-  $$('.preview-mode[data-preview-zoom]').forEach((button) => {
-    button.addEventListener('click', () => setPreviewZoom(button.dataset.previewZoom));
-  });
   document.addEventListener('fullscreenchange', () => { syncFullscreenButton(); applyPreview(); });
   window.addEventListener('resize', applyPreview);
-  try {
-    previewState.mode = localStorage.getItem('orbit-preview-mode') || 'desktop';
-    previewState.zoom = localStorage.getItem('orbit-preview-zoom') || 'fit';
-  } catch { /* 隐私模式可能禁用 */ }
-  if (!PREVIEW_VIEWPORTS[previewState.mode]) previewState.mode = 'desktop';
   applyPreview();
   if (window.ResizeObserver) new ResizeObserver(() => applyPreview()).observe($('#preview-stage'));
 
