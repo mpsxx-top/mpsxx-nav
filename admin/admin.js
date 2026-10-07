@@ -213,7 +213,7 @@ const SITE_FIELDS = [
   { key: 'domain', label: '域名', type: 'text' },
   { key: 'alt', label: '备用域名', type: 'text', hint: '可留空' },
   { key: 'url', label: '访问地址', type: 'text' },
-  { key: 'desc', label: '描述', type: 'textarea', full: true },
+  { key: 'desc', label: '描述', type: 'text', full: true, hint: '单行' },
   { key: 'tags', label: '标签', type: 'tags', hint: '逗号或顿号分隔，最多 12 个' },
   {
     key: 'status', label: '在线状态', type: 'select',
@@ -736,6 +736,16 @@ function bindStatic() {
     if (file) importJson(file);
     e.target.value = '';
   });
+
+  // 行星横向条：鼠标悬停时滚轮转为横向滚动（滚动轴已隐藏，滚轮是主要入口）
+  const planetStrip = $('#planet-list');
+  if (planetStrip) {
+    planetStrip.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      planetStrip.scrollLeft += delta;
+    }, { passive: false });
+  }
 
   bindDragAndDrop();
 }
