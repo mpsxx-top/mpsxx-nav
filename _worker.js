@@ -596,6 +596,19 @@ export default {
     const { pathname } = url;
 
     try {
+      // 1) www 子域统一 301 到主域。放在代码里实现，就不需要 Zone → Rules 权限。
+      if (url.hostname.startsWith('www.')) {
+        url.hostname = url.hostname.slice(4);
+        url.protocol = 'https:';
+        return Response.redirect(url.toString(), 301);
+      }
+
+      // 2) 管理面板静态资源：Access 配置完成前不对外提供，避免 /admin 裸奔在公网。
+      //    配置了 ACCESS_AUD 之后，边缘由 Cloudflare Access 拦人，这里只做兜底闸门。
+      if ((pathname === '/admin' || pathname.startsWith('/admin/')) && !env.ACCESS_AUD) {
+        return fail('管理面板尚未启用：Cloudflare Access 未配置', 503);
+      }
+
       if (pathname === '/api/content') return await handlePublicContent(request, env, ctx);
       if (pathname === '/api/admin' || pathname.startsWith('/api/admin/')) return await handleAdmin(request, env, ctx, pathname);
       if (pathname.startsWith('/api/')) return fail('接口不存在', 404);
